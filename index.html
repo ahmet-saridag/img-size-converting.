@@ -1,0 +1,61 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resim Yeniden Boyutlandırma</title>
+</head>
+<body>
+
+<input type="file" id="fileInput" onchange="handleFile()">
+<canvas id="outputCanvas" width="32" height="32" style="border:1px solid #000;"></canvas>
+<button onclick="downloadImage()">İndir</button>
+
+<script>
+var resizedImageDataUrl = null;
+
+function handleFile() {
+    var input = document.getElementById('fileInput');
+    var canvas = document.getElementById('outputCanvas');
+    var ctx = canvas.getContext('2d');
+
+    var file = input.files[0];
+
+    if (file) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            var img = new Image();
+            img.src = e.target.result;
+
+            img.onload = function () {
+                // Resmi istediğiniz boyuta çek
+                var targetWidth = 32;
+                var targetHeight = 32;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+                // İşlenmiş resmi alabilirsiniz
+                resizedImageDataUrl = canvas.toDataURL('image/jpeg');
+            };
+        };
+
+        reader.readAsDataURL(file);
+    }
+}
+
+function downloadImage() {
+    if (resizedImageDataUrl) {
+        // Yeniden boyutlandırılmış resmi indirme
+        var link = document.createElement('a');
+        link.href = resizedImageDataUrl;
+        link.download = 'resized_image.jpg';
+        link.click();
+    } else {
+        alert("Lütfen önce bir resim seçin ve boyutlandırın.");
+    }
+}
+</script>
+
+</body>
+</html>
